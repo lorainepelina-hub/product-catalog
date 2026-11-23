@@ -21,7 +21,14 @@ function App() {
     setCategory("All");
     setSortOrder("default");
   };
-
+  const filteredProducts = [...products]
+    .filter((p) => p.title.toLowerCase().includes(searchText.toLowerCase()))
+    .filter((p) => category === "All" || p.category === category)
+    .sort((a, b) => {
+      if (sortOrder === "low") return a.price - b.price;
+      if (sortOrder === "high") return b.price - a.price;
+      return 0;
+    });
   return (
     <div className="app">
       <header className="app-header">
@@ -45,7 +52,7 @@ function App() {
       />
 
       <main className="product-grid">
-        {products.map((product) => (
+               {filteredProducts.map((product) => (
           <ProductCard
             key={product.id}
             title={product.title}
