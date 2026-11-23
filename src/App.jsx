@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { products } from "./data/products";
 import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
@@ -10,6 +10,7 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [category, setCategory] = useState("All");
   const [sortOrder, setSortOrder] = useState("default");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const handleAddToCart = (title) => {
     setCartCount((prev) => prev + 1);
@@ -20,9 +21,16 @@ function App() {
     setSearchText("");
     setCategory("All");
     setSortOrder("default");
+        setDebouncedSearch("");
   };
+    useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 300);
+    return () => clearTimeout(timer); // cleanup
+  }, [searchText]);
   const filteredProducts = [...products]
-    .filter((p) => p.title.toLowerCase().includes(searchText.toLowerCase()))
+        .filter((p) => p.title.toLowerCase().includes(debouncedSearch.toLowerCase()))
     .filter((p) => category === "All" || p.category === category)
     .sort((a, b) => {
       if (sortOrder === "low") return a.price - b.price;
