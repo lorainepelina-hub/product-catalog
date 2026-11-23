@@ -1,16 +1,25 @@
 import { useState } from "react";
 import { products } from "./data/products";
 import ProductCard from "./components/ProductCard";
+import SearchBar from "./components/SearchBar";
 import "./App.css";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
   const [lastAdded, setLastAdded] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [category, setCategory] = useState("All");
+  const [sortOrder, setSortOrder] = useState("default");
 
-  // Callback passed down to every ProductCard; the child calls it with the title
   const handleAddToCart = (title) => {
     setCartCount((prev) => prev + 1);
     setLastAdded(title);
+  };
+
+  const handleClear = () => {
+    setSearchText("");
+    setCategory("All");
+    setSortOrder("default");
   };
 
   return (
@@ -24,6 +33,16 @@ function App() {
           ? "Your cart is empty."
           : `Items added to cart: ${cartCount} (Last added: ${lastAdded})`}
       </p>
+
+      <SearchBar
+        searchText={searchText}
+        onSearchChange={setSearchText}
+        category={category}
+        onCategoryChange={setCategory}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
+        onClear={handleClear}
+      />
 
       <main className="product-grid">
         {products.map((product) => (
