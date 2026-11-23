@@ -30,6 +30,7 @@ function App() {
     return () => clearTimeout(timer); // cleanup
   }, [searchText]);
   const filteredProducts = [...products]
+  
         .filter((p) => p.title.toLowerCase().includes(debouncedSearch.toLowerCase()))
     .filter((p) => category === "All" || p.category === category)
     .sort((a, b) => {
@@ -37,6 +38,10 @@ function App() {
       if (sortOrder === "high") return b.price - a.price;
       return 0;
     });
+
+      useEffect(() => {
+    document.title = `CvSU Mini Store (${filteredProducts.length} results)`;
+  }, [filteredProducts.length]);
   return (
     <div className="app">
       <header className="app-header">
@@ -59,20 +64,30 @@ function App() {
         onClear={handleClear}
       />
 
-      <main className="product-grid">
-               {filteredProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            title={product.title}
-            price={product.price}
-            category={product.category}
-            inStock={product.inStock}
-            onAddToCart={handleAddToCart}
-          >
-            {product.badge && <span>{product.badge}</span>}
-          </ProductCard>
-        ))}
-      </main>
+           <p className="result-count">
+        Showing {filteredProducts.length} of {products.length} products
+      </p>
+
+      {filteredProducts.length === 0 ? (
+        <p className="empty-state">
+          No products found. Try a different keyword or category.
+        </p>
+      ) : (
+        <main className="product-grid">
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              title={product.title}
+              price={product.price}
+              category={product.category}
+              inStock={product.inStock}
+              onAddToCart={handleAddToCart}
+            >
+              {product.badge && <span>{product.badge}</span>}
+            </ProductCard>
+          ))}
+        </main>
+      )}
     </div>
   );
 }
